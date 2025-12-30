@@ -12,12 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('bills', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
-            $table->id(); // BIGINT UNSIGNED
+            $table->id();
+            $table->uuid('uuid')->unique();
             $table->string('file_path');
+            $table->longText('raw_text')->nullable();
+            $table->string('ocr_engine')->default('paddleocr');
+            $table->timestamp('ocr_completed_at')->nullable();
             $table->string('hospital_name')->nullable();
             $table->decimal('total_price', 15, 2)->nullable();
-            $table->string('status')->default('pending');
+            $table->enum('status', ['pending', 'ocr_completed', 'analyzed', 'failed'])->default('pending');
             $table->string('session_id')->nullable();
             $table->timestamps();
         });

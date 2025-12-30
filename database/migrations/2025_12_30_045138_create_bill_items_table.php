@@ -6,26 +6,27 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('bill_items', function (Blueprint $table) {
-            $table->engine = 'InnoDB';
             $table->id();
-            $table->unsignedBigInteger('bill_id'); // FK nanti
+            $table->foreignId('bill_id')
+                ->constrained('bills')
+                ->cascadeOnDelete();
+
             $table->string('item_name');
             $table->string('category');
             $table->decimal('price', 15, 2);
-            $table->boolean('is_suspicious')->default(false);
+            $table->enum('status', ['safe', 'review', 'danger'])->default('safe');
+            $table->string('label')->nullable();
+            $table->text('description')->nullable();
             $table->timestamps();
+
+            $table->index('status');
+            $table->index('category');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('bill_items');

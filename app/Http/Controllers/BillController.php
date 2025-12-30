@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Actions\UploadBillAction;
 use App\Http\Requests\UploadBillRequest;
 use App\Models\Bill;
+use App\Models\BillItem;
 
 class BillController extends Controller
 {
@@ -12,26 +13,31 @@ class BillController extends Controller
         UploadBillRequest $request,
         UploadBillAction $action
     ) {
-        $bill = $action->execute($request);
+        $bill = $action->execute(
+            $request->file('bill_file'),
+            session()->getId()
+        );
 
         return redirect()->route('bill.show', $bill);
     }
 
-public function show(Bill $bill)
-{
-    $results = $bill->items->map(function ($item) {
-        return [
-            'id' => 'item-' . $item->id,
-            'itemName' => $item->item_name,
-            'category' => $item->category,
-            'price' => number_format($item->price, 0, ',', '.'),
-            'status' => $item->status,
-            'label' => $item->label,
-            'description' => $item->description,
-        ];
-    });
+    public function show(Bill $bill)
+    {
+        $results = $bill->items->map(function (BillItem $item) {
+            return [
+                'id' => 'item-' . $item->id,
+                'itemName' => $item->item_name,
+                'category' => $item->category,
+                'price' => $item->price,
+                'status' => $item->status,
+                'label' => $item->label,
+                'description' => $item->description,
+            ];
+        });
 
-    return view('scan', compact('bill', 'results'));
-}
-
+        return view('scan', [
+            'bill' => $bill,
+            'results' => $results,
+        ]);
+    }
 }

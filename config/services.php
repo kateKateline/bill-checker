@@ -14,6 +14,12 @@ return [
     |
     */
 
+    'ocr' => [
+        'endpoint' => env('OCR_SERVICE_URL', 'http://127.0.0.1:8000/ocr'),
+        'verify_ssl' => env('OCR_VERIFY_SSL', false),
+    ],
+
+
     'postmark' => [
         'key' => env('POSTMARK_API_KEY'),
     ],
