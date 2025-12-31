@@ -17,7 +17,7 @@
             <p class="text-[11px] text-slate-400 mt-4 uppercase tracking-[widest] font-medium">PNG, JPG, PDF (Max 10MB)</p>
         </div>
 
-        <div id="localPreview" class="flex absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl items-center justify-center p-4 animate-in fade-in duration-300">
+        <div id="localPreview" class="hidden absolute inset-0 bg-white/90 backdrop-blur-sm rounded-2xl items-center justify-center p-4 animate-in fade-in duration-300">
             <div class="flex items-center gap-4 bg-white p-3 rounded-xl shadow-lg border border-slate-100">
                 <div class="w-12 h-12 rounded-lg bg-indigo-50 overflow-hidden border border-indigo-100">
                     <img id="previewImage" src="#" class="hidden w-full h-full object-cover">
