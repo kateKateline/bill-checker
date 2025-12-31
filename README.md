@@ -1,19 +1,15 @@
 # 🏥 BillCheck - Hospital Bill Transparency Analyzer
 
-[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?logo=laravel)](https://laravel.com)
-[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php)](https://php.net)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-
 **BillCheck** adalah aplikasi web yang membantu menganalisis transparansi tagihan rumah sakit menggunakan teknologi OCR (Optical Character Recognition) dan AI untuk mengidentifikasi potensi phantom billing, biaya tersembunyi, atau harga yang tidak wajar.
 
 ## ✨ Fitur Utama
 
-- 🔍 **OCR Processing** - Ekstraksi teks otomatis dari gambar/PDF tagihan
-- 🤖 **AI-Powered Analysis** - Analisis item tagihan menggunakan Groq LLM
-- 💰 **Currency Detection** - Deteksi dan konversi mata uang otomatis (USD/IDR)
-- 🚨 **Risk Detection** - Identifikasi phantom billing dan biaya mencurigakan
-- 📊 **Categorization** - Pengelompokan item berdasarkan tingkat risiko
-- 🎨 **Modern UI** - Interface yang clean dan responsif
+-  **OCR Processing** - Ekstraksi teks otomatis dari gambar/PDF tagihan
+-  **AI-Powered Analysis** - Analisis item tagihan menggunakan Groq LLM
+-  **Currency Detection** - Deteksi dan konversi mata uang otomatis (USD/IDR)
+-  **Risk Detection** - Identifikasi phantom billing dan biaya mencurigakan
+-  **Categorization** - Pengelompokan item berdasarkan tingkat risiko
+-  **Modern UI** - Interface yang clean dan responsif
 
 ## 🛠️ Tech Stack
 
@@ -99,6 +95,8 @@ php artisan migrate
 
 ### 4. Setup OCR Service (PaddleOCR)
 
+Aplikasi ini membutuhkan **PaddleOCR Service** yang berjalan terpisah untuk melakukan ekstraksi teks dari gambar.
+
 #### Clone OCR Repository
 ```bash
 # Di directory terpisah (di luar project Laravel)
@@ -107,48 +105,16 @@ git clone https://github.com/KateKateline/paddle-ocr-service.git
 cd paddle-ocr-service
 ```
 
-#### Install Python Dependencies
-```bash
-# Buat virtual environment (recommended)
-python -m venv venv
+** Untuk instalasi dan konfigurasi lengkap OCR service, silakan ikuti panduan di repository:**
+ [paddle-ocr-service](https://github.com/KateKateline/paddle-ocr-service)
 
-# Aktifkan virtual environment
-# Windows:
-venv\Scripts\activate
-# Linux/Mac:
-source venv/bin/activate
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-#### Run OCR Service
-```bash
-# Jalankan FastAPI server
-python main.py
-
-# Atau gunakan uvicorn
-uvicorn main:app --host 127.0.0.1 --port 8000 --reload
-```
-
-**Note:** OCR service akan berjalan di `http://127.0.0.1:8000`
-
-#### Verifikasi OCR Service
-```bash
-# Test endpoint
-curl http://127.0.0.1:8000/health
-
-# Expected response:
-# {"status": "healthy", "service": "PaddleOCR"}
-```
+**Note:** Pastikan OCR service sudah berjalan di `http://127.0.0.1:8000` sebelum menjalankan aplikasi BillCheck.
 
 ### 5. Configure API Keys
 
 Edit file `.env` dan tambahkan:
 
 ```env
-# OCR Service Configuration
-OCR_SERVICE_URL=http://127.0.0.1:8000/ocr
 
 # Groq AI Configuration
 GROQ_API_KEY=your_groq_api_key_here
@@ -167,8 +133,6 @@ GROQ_API_KEY=your_groq_api_key_here
 # Create symbolic link untuk storage
 php artisan storage:link
 
-# Set permissions (Linux/Mac)
-chmod -R 775 storage bootstrap/cache
 ```
 
 ### 7. Build Assets
@@ -177,8 +141,6 @@ chmod -R 775 storage bootstrap/cache
 # Development build (with watch mode)
 npm run dev
 
-# Production build
-npm run build
 ```
 
 ---
@@ -188,19 +150,22 @@ npm run build
 ### Terminal 1: Laravel Development Server
 ```bash
 cd billcheck
-php artisan serve
+php artisan serve --port=8001
 ```
-App akan berjalan di: `http://127.0.0.1:8000`
+App harus berjalan **SELAIN** di port: `http://127.0.0.1:8000`
 
 ### Terminal 2: OCR Service
+
+Tutorial lengkap berada di [paddle-ocr-service](https://github.com/KateKateline/paddle-ocr-service)
 ```bash
 cd paddle-ocr-service
-source venv/bin/activate  # atau venv\Scripts\activate di Windows
-python main.py
+py -3.10 -m venv venv
+uvicorn app.main:app --reload
+
 ```
 OCR service akan berjalan di: `http://127.0.0.1:8000`
 
-### Terminal 3: Vite Dev Server (Optional, untuk development)
+### Terminal 3: Vite Dev Server
 ```bash
 cd billcheck
 npm run dev
@@ -276,142 +241,9 @@ QUEUE_CONNECTION=database
 ## 🧪 Testing
 
 ### Test Upload & OCR
-1. Akses `http://127.0.0.1:8000`
+1. Akses `http://127.0.0.1:8001`
 2. Upload sample bill (PNG/JPG/PDF)
 3. Tunggu OCR processing selesai
 4. Klik "Analisis dengan AI"
 
-### Test API Endpoints
-```bash
-# Health check
-curl http://127.0.0.1:8000/api/health
-
-# Upload test (requires file)
-curl -X POST http://127.0.0.1:8000/bill/upload \
-  -F "bill_file=@/path/to/sample-bill.jpg"
-```
-
 ---
-
-## 🐛 Troubleshooting
-
-### Issue: OCR Service Not Running
-**Solution:**
-```bash
-cd paddle-ocr-service
-source venv/bin/activate
-python main.py
-```
-
-### Issue: "GROQ_API_KEY is not configured"
-**Solution:**
-- Pastikan `.env` berisi `GROQ_API_KEY`
-- Restart Laravel server: `php artisan serve`
-
-### Issue: Database Connection Failed
-**Solution:**
-```bash
-# Cek MySQL service
-sudo systemctl status mysql  # Linux
-# atau
-net start MySQL80            # Windows
-
-# Test connection
-mysql -u root -p
-```
-
-### Issue: Storage Permission Denied
-**Solution:**
-```bash
-# Linux/Mac
-chmod -R 775 storage bootstrap/cache
-chown -R www-data:www-data storage bootstrap/cache
-
-# Windows: Run as Administrator
-```
-
-### Issue: npm/Vite Build Errors
-**Solution:**
-```bash
-# Clear cache dan reinstall
-rm -rf node_modules package-lock.json
-npm install
-npm run build
-```
-
----
-
-## 📝 API Documentation
-
-### POST `/bill/upload`
-Upload bill file for OCR processing
-
-**Request:**
-```
-Content-Type: multipart/form-data
-- bill_file: File (jpg|jpeg|png|pdf, max 5MB)
-```
-
-**Response:**
-```
-Redirect to: /bill/{uuid}
-```
-
-### GET `/bill/{uuid}`
-View bill details and OCR results
-
-**Response:** HTML view with bill data
-
-### POST `/bill/{uuid}/analyze`
-Analyze bill with AI
-
-**Response:**
-```
-Redirect to: /bill/{uuid} (with analysis results)
-```
-
----
-
-## 🤝 Contributing
-
-1. Fork repository
-2. Create feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open Pull Request
-
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
-
----
-
-## 👤 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
----
-
-## 🙏 Acknowledgments
-
-- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) - OCR engine
-- [Groq](https://groq.com) - AI inference platform
-- [Laravel](https://laravel.com) - PHP framework
-- [Tailwind CSS](https://tailwindcss.com) - CSS framework
-
----
-
-## 📞 Support
-
-Jika mengalami masalah atau memiliki pertanyaan:
-- 📧 Email: support@billcheck.com
-- 💬 Discord: [Join our server](https://discord.gg/your-invite)
-- 📚 Docs: [Read the docs](https://docs.billcheck.com)
-
----
-
-**Made with ❤️ by BillCheck Team**
