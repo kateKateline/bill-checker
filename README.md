@@ -1,59 +1,417 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🏥 BillCheck - Hospital Bill Transparency Analyzer
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-FF2D20?logo=laravel)](https://laravel.com)
+[![PHP](https://img.shields.io/badge/PHP-8.2+-777BB4?logo=php)](https://php.net)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-## About Laravel
+**BillCheck** adalah aplikasi web yang membantu menganalisis transparansi tagihan rumah sakit menggunakan teknologi OCR (Optical Character Recognition) dan AI untuk mengidentifikasi potensi phantom billing, biaya tersembunyi, atau harga yang tidak wajar.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## ✨ Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- 🔍 **OCR Processing** - Ekstraksi teks otomatis dari gambar/PDF tagihan
+- 🤖 **AI-Powered Analysis** - Analisis item tagihan menggunakan Groq LLM
+- 💰 **Currency Detection** - Deteksi dan konversi mata uang otomatis (USD/IDR)
+- 🚨 **Risk Detection** - Identifikasi phantom billing dan biaya mencurigakan
+- 📊 **Categorization** - Pengelompokan item berdasarkan tingkat risiko
+- 🎨 **Modern UI** - Interface yang clean dan responsif
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 🛠️ Tech Stack
 
-## Learning Laravel
+- **Backend:** Laravel 11.x, PHP 8.2+
+- **Frontend:** Tailwind CSS 4, Vanilla JavaScript
+- **OCR Service:** PaddleOCR (Python FastAPI)
+- **AI Engine:** Groq API (Llama 3.1)
+- **Database:** MySQL 8.0+
+- **Asset Bundler:** Vite
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 📋 Prerequisites
 
-## Laravel Sponsors
+Pastikan sistem Anda sudah terinstal:
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+- [PHP 8.2+](https://www.php.net/downloads) dengan extensions: `mbstring`, `xml`, `curl`, `mysql`, `zip`, `gd`
+- [Composer 2.x](https://getcomposer.org/download/)
+- [Node.js 18+ & npm 9+](https://nodejs.org/)
+- [MySQL 8.0+](https://dev.mysql.com/downloads/)
+- [Git](https://git-scm.com/downloads)
+- [Python 3.10+](https://www.python.org/downloads/) (untuk OCR service)
+- [pip](https://pip.pypa.io/en/stable/installation/) (Python package manager)
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🚀 Installation Guide
 
-## Contributing
+### 1. Clone Repository
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```bash
+# Clone main application
+git clone https://github.com/yourusername/billcheck.git
+cd billcheck
+```
 
-## Code of Conduct
+### 2. Install Dependencies
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### Backend Dependencies
+```bash
+# Install PHP dependencies via Composer
+composer install
 
-## Security Vulnerabilities
+# Copy environment file
+cp .env.example .env
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# Generate application key
+php artisan key:generate
+```
 
-## License
+#### Frontend Dependencies
+```bash
+# Install Node.js dependencies
+npm install
+```
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+### 3. Database Setup
+
+```bash
+# Create database
+mysql -u root -p
+```
+
+```sql
+CREATE DATABASE bill_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+EXIT;
+```
+
+Konfigurasi `.env`:
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bill_db
+DB_USERNAME=root
+DB_PASSWORD=your_password_here
+```
+
+```bash
+# Run migrations
+php artisan migrate
+```
+
+### 4. Setup OCR Service (PaddleOCR)
+
+#### Clone OCR Repository
+```bash
+# Di directory terpisah (di luar project Laravel)
+cd ..
+git clone https://github.com/KateKateline/paddle-ocr-service.git
+cd paddle-ocr-service
+```
+
+#### Install Python Dependencies
+```bash
+# Buat virtual environment (recommended)
+python -m venv venv
+
+# Aktifkan virtual environment
+# Windows:
+venv\Scripts\activate
+# Linux/Mac:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+```
+
+#### Run OCR Service
+```bash
+# Jalankan FastAPI server
+python main.py
+
+# Atau gunakan uvicorn
+uvicorn main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+**Note:** OCR service akan berjalan di `http://127.0.0.1:8000`
+
+#### Verifikasi OCR Service
+```bash
+# Test endpoint
+curl http://127.0.0.1:8000/health
+
+# Expected response:
+# {"status": "healthy", "service": "PaddleOCR"}
+```
+
+### 5. Configure API Keys
+
+Edit file `.env` dan tambahkan:
+
+```env
+# OCR Service Configuration
+OCR_SERVICE_URL=http://127.0.0.1:8000/ocr
+
+# Groq AI Configuration
+GROQ_API_KEY=your_groq_api_key_here
+```
+
+#### Mendapatkan Groq API Key:
+1. Kunjungi [console.groq.com](https://console.groq.com)
+2. Sign up/Login
+3. Navigate ke **API Keys** section
+4. Klik **Create API Key**
+5. Copy key dan paste ke `.env`
+
+### 6. Storage Setup
+
+```bash
+# Create symbolic link untuk storage
+php artisan storage:link
+
+# Set permissions (Linux/Mac)
+chmod -R 775 storage bootstrap/cache
+```
+
+### 7. Build Assets
+
+```bash
+# Development build (with watch mode)
+npm run dev
+
+# Production build
+npm run build
+```
+
+---
+
+## 🎯 Running the Application
+
+### Terminal 1: Laravel Development Server
+```bash
+cd billcheck
+php artisan serve
+```
+App akan berjalan di: `http://127.0.0.1:8000`
+
+### Terminal 2: OCR Service
+```bash
+cd paddle-ocr-service
+source venv/bin/activate  # atau venv\Scripts\activate di Windows
+python main.py
+```
+OCR service akan berjalan di: `http://127.0.0.1:8000`
+
+### Terminal 3: Vite Dev Server (Optional, untuk development)
+```bash
+cd billcheck
+npm run dev
+```
+
+---
+
+## 📁 Project Structure
+
+```
+billcheck/
+├── app/
+│   ├── Actions/              # Business logic actions
+│   ├── Http/Controllers/     # HTTP controllers
+│   ├── Models/              # Eloquent models
+│   └── Services/            # Service classes
+│       ├── Ai/              # AI analysis services
+│       ├── Ocr/             # OCR integration
+│       ├── BillValidator.php
+│       └── CurrencyConverter.php
+├── database/
+│   └── migrations/          # Database migrations
+├── resources/
+│   ├── css/                 # Tailwind CSS
+│   ├── js/                  # JavaScript files
+│   └── views/               # Blade templates
+├── routes/
+│   └── web.php              # Web routes
+├── public/                  # Public assets
+└── storage/                 # File storage
+```
+
+---
+
+## 🔧 Configuration
+
+### Environment Variables
+
+```env
+# App Configuration
+APP_NAME=BillCheck
+APP_ENV=local
+APP_DEBUG=true
+APP_URL=http://localhost
+
+# Database
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=bill_db
+DB_USERNAME=root
+DB_PASSWORD=
+
+# OCR Service
+OCR_SERVICE_URL=http://127.0.0.1:8000/ocr
+
+# Groq AI
+GROQ_API_KEY=your_groq_api_key
+
+# Session
+SESSION_DRIVER=file
+SESSION_LIFETIME=120
+
+# File Storage
+FILESYSTEM_DISK=local
+
+# Queue (optional)
+QUEUE_CONNECTION=database
+```
+
+---
+
+## 🧪 Testing
+
+### Test Upload & OCR
+1. Akses `http://127.0.0.1:8000`
+2. Upload sample bill (PNG/JPG/PDF)
+3. Tunggu OCR processing selesai
+4. Klik "Analisis dengan AI"
+
+### Test API Endpoints
+```bash
+# Health check
+curl http://127.0.0.1:8000/api/health
+
+# Upload test (requires file)
+curl -X POST http://127.0.0.1:8000/bill/upload \
+  -F "bill_file=@/path/to/sample-bill.jpg"
+```
+
+---
+
+## 🐛 Troubleshooting
+
+### Issue: OCR Service Not Running
+**Solution:**
+```bash
+cd paddle-ocr-service
+source venv/bin/activate
+python main.py
+```
+
+### Issue: "GROQ_API_KEY is not configured"
+**Solution:**
+- Pastikan `.env` berisi `GROQ_API_KEY`
+- Restart Laravel server: `php artisan serve`
+
+### Issue: Database Connection Failed
+**Solution:**
+```bash
+# Cek MySQL service
+sudo systemctl status mysql  # Linux
+# atau
+net start MySQL80            # Windows
+
+# Test connection
+mysql -u root -p
+```
+
+### Issue: Storage Permission Denied
+**Solution:**
+```bash
+# Linux/Mac
+chmod -R 775 storage bootstrap/cache
+chown -R www-data:www-data storage bootstrap/cache
+
+# Windows: Run as Administrator
+```
+
+### Issue: npm/Vite Build Errors
+**Solution:**
+```bash
+# Clear cache dan reinstall
+rm -rf node_modules package-lock.json
+npm install
+npm run build
+```
+
+---
+
+## 📝 API Documentation
+
+### POST `/bill/upload`
+Upload bill file for OCR processing
+
+**Request:**
+```
+Content-Type: multipart/form-data
+- bill_file: File (jpg|jpeg|png|pdf, max 5MB)
+```
+
+**Response:**
+```
+Redirect to: /bill/{uuid}
+```
+
+### GET `/bill/{uuid}`
+View bill details and OCR results
+
+**Response:** HTML view with bill data
+
+### POST `/bill/{uuid}/analyze`
+Analyze bill with AI
+
+**Response:**
+```
+Redirect to: /bill/{uuid} (with analysis results)
+```
+
+---
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see [LICENSE](LICENSE) file for details.
+
+---
+
+## 👤 Author
+
+**Your Name**
+- GitHub: [@yourusername](https://github.com/yourusername)
+- Email: your.email@example.com
+
+---
+
+## 🙏 Acknowledgments
+
+- [PaddleOCR](https://github.com/PaddlePaddle/PaddleOCR) - OCR engine
+- [Groq](https://groq.com) - AI inference platform
+- [Laravel](https://laravel.com) - PHP framework
+- [Tailwind CSS](https://tailwindcss.com) - CSS framework
+
+---
+
+## 📞 Support
+
+Jika mengalami masalah atau memiliki pertanyaan:
+- 📧 Email: support@billcheck.com
+- 💬 Discord: [Join our server](https://discord.gg/your-invite)
+- 📚 Docs: [Read the docs](https://docs.billcheck.com)
+
+---
+
+**Made with ❤️ by BillCheck Team**
