@@ -2,6 +2,8 @@
 
 **BillCheck** adalah aplikasi web yang membantu menganalisis transparansi tagihan rumah sakit menggunakan teknologi OCR (Optical Character Recognition) dan AI untuk mengidentifikasi potensi phantom billing, biaya tersembunyi, atau harga yang tidak wajar.
 
+**DISCLAIMER** aplikasi web ini membutuhkan paddleocr yang sudah di sediakan di: [paddle-ocr-service](https://github.com/KateKateline/paddle-ocr-service) 
+
 ## ✨ Fitur Utama
 
 -  **OCR Processing** - Ekstraksi teks otomatis dari gambar/PDF tagihan
@@ -26,13 +28,13 @@
 
 Pastikan sistem Anda sudah terinstal:
 
-- [PHP 8.2+](https://www.php.net/downloads) dengan extensions: `mbstring`, `xml`, `curl`, `mysql`, `zip`, `gd`
+- [PHP 8.2+](https://www.php.net/downloads)
 - [Composer 2.x](https://getcomposer.org/download/)
 - [Node.js 18+ & npm 9+](https://nodejs.org/)
 - [MySQL 8.0+](https://dev.mysql.com/downloads/)
 - [Git](https://git-scm.com/downloads)
-- [Python 3.10+](https://www.python.org/downloads/) (untuk OCR service)
-- [pip](https://pip.pypa.io/en/stable/installation/) (Python package manager)
+- [pip](https://pip.pypa.io/en/stable/installation/)
+- [Python 3.10](https://www.python.org/downloads/) (untuk OCR service)
 
 ---
 
