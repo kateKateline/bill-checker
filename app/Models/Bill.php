@@ -7,6 +7,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
+/**
+ * Bill Model
+ * 
+ * Represents a hospital bill with OCR text and AI analysis results.
+ */
 class Bill extends Model
 {
     protected $fillable = [
@@ -26,6 +31,11 @@ class Bill extends Model
         'total_price' => 'decimal:2',
     ];
 
+    /**
+     * Boot the model
+     * 
+     * Automatically generates UUID when creating a new bill.
+     */
     protected static function booted(): void
     {
         static::creating(function ($model) {
@@ -35,6 +45,11 @@ class Bill extends Model
         });
     }
 
+    /**
+     * Get the route key for the model
+     * 
+     * Uses UUID instead of ID for routing.
+     */
     public function getRouteKeyName(): string
     {
         return 'uuid';
@@ -44,6 +59,11 @@ class Bill extends Model
     // RELATIONSHIPS
     // ==========================================
 
+    /**
+     * Get all bill items
+     * 
+     * @return HasMany
+     */
     public function items(): HasMany
     {
         return $this->hasMany(BillItem::class);
@@ -53,26 +73,41 @@ class Bill extends Model
     // SCOPES
     // ==========================================
 
+    /**
+     * Scope for pending bills
+     */
     public function scopePending(Builder $query): Builder
     {
         return $query->where('status', 'pending');
     }
 
+    /**
+     * Scope for OCR completed bills
+     */
     public function scopeOcrCompleted(Builder $query): Builder
     {
         return $query->where('status', 'ocr_completed');
     }
 
+    /**
+     * Scope for analyzed bills
+     */
     public function scopeAnalyzed(Builder $query): Builder
     {
         return $query->where('status', 'analyzed');
     }
 
+    /**
+     * Scope for failed bills
+     */
     public function scopeFailed(Builder $query): Builder
     {
         return $query->where('status', 'failed');
     }
 
+    /**
+     * Scope for bills by session ID
+     */
     public function scopeBySession(Builder $query, string $sessionId): Builder
     {
         return $query->where('session_id', $sessionId);
@@ -82,31 +117,49 @@ class Bill extends Model
     // STATUS CHECKERS
     // ==========================================
 
+    /**
+     * Check if bill is pending
+     */
     public function isPending(): bool
     {
         return $this->status === 'pending';
     }
 
+    /**
+     * Check if OCR is completed
+     */
     public function isOcrCompleted(): bool
     {
         return $this->status === 'ocr_completed';
     }
 
+    /**
+     * Check if bill is analyzed
+     */
     public function isAnalyzed(): bool
     {
         return $this->status === 'analyzed';
     }
 
+    /**
+     * Check if bill processing failed
+     */
     public function isFailed(): bool
     {
         return $this->status === 'failed';
     }
 
+    /**
+     * Check if bill has raw text
+     */
     public function hasRawText(): bool
     {
         return !empty($this->raw_text);
     }
 
+    /**
+     * Check if bill has items
+     */
     public function hasItems(): bool
     {
         return $this->items()->exists();
@@ -116,6 +169,12 @@ class Bill extends Model
     // STATUS UPDATERS
     // ==========================================
 
+    /**
+     * Mark bill as OCR completed
+     * 
+     * @param string $rawText
+     * @return void
+     */
     public function markAsOcrCompleted(string $rawText): void
     {
         $this->update([
@@ -125,6 +184,13 @@ class Bill extends Model
         ]);
     }
 
+    /**
+     * Mark bill as analyzed
+     * 
+     * @param float $totalPrice
+     * @param string|null $hospitalName
+     * @return void
+     */
     public function markAsAnalyzed(float $totalPrice, ?string $hospitalName = null): void
     {
         $this->update([
@@ -134,6 +200,11 @@ class Bill extends Model
         ]);
     }
 
+    /**
+     * Mark bill as failed
+     * 
+     * @return void
+     */
     public function markAsFailed(): void
     {
         $this->update([
@@ -145,16 +216,31 @@ class Bill extends Model
     // HELPERS
     // ==========================================
 
+    /**
+     * Get formatted total price
+     * 
+     * @return string
+     */
     public function getFormattedTotalPriceAttribute(): string
     {
         return 'Rp ' . number_format($this->total_price ?? 0, 0, ',', '.');
     }
 
+    /**
+     * Get file URL
+     * 
+     * @return string
+     */
     public function getFileUrlAttribute(): string
     {
         return asset('storage/' . $this->file_path);
     }
 
+    /**
+     * Get status badge information
+     * 
+     * @return array
+     */
     public function getStatusBadgeAttribute(): array
     {
         return match($this->status) {
@@ -166,16 +252,31 @@ class Bill extends Model
         };
     }
 
+    /**
+     * Get count of danger items
+     * 
+     * @return int
+     */
     public function getDangerItemsCountAttribute(): int
     {
         return $this->items()->where('status', 'danger')->count();
     }
 
+    /**
+     * Get count of review items
+     * 
+     * @return int
+     */
     public function getReviewItemsCountAttribute(): int
     {
         return $this->items()->where('status', 'review')->count();
     }
 
+    /**
+     * Get count of safe items
+     * 
+     * @return int
+     */
     public function getSafeItemsCountAttribute(): int
     {
         return $this->items()->where('status', 'safe')->count();

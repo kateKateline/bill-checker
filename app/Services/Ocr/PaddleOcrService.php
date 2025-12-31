@@ -6,8 +6,20 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Http;
 use App\Services\Ocr\OcrException;
 
+/**
+ * Paddle OCR Service
+ * 
+ * Implements OCR service using PaddleOCR API endpoint.
+ */
 class PaddleOcrService implements OcrServiceInterface
 {
+    /**
+     * Extract text from uploaded file using OCR
+     * 
+     * @param UploadedFile $file
+     * @return string
+     * @throws OcrException
+     */
     public function extractText(UploadedFile $file): string
     {
         $endpoint = rtrim(config('services.ocr.endpoint'), '/');
