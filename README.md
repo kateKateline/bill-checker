@@ -2,7 +2,10 @@
 
 **BillCheck** adalah aplikasi web yang membantu menganalisis transparansi tagihan rumah sakit menggunakan teknologi OCR (Optical Character Recognition) dan AI untuk mengidentifikasi potensi phantom billing, biaya tersembunyi, atau harga yang tidak wajar.
 
-**DISCLAIMER** aplikasi web ini membutuhkan paddleocr yang sudah di sediakan di: [paddle-ocr-service](https://github.com/KateKateline/paddle-ocr-service) 
+**DISCLAIMER**
+Project Bill Check HARUS ditempatkan dalam satu root folder yang sama dengan project paddle-ocr-service.
+Kedua folder tersebut wajib berada dalam satu direktori utama agar integrasi dan komunikasi sistem dapat berjalan dengan baik.
+Repository paddle-ocr-service dapat diakses melalui tautan berikut: [paddle-ocr-service](https://github.com/KateKateline/paddle-ocr-service) 
 
 ## ✨ Fitur Utama
 
